@@ -134,3 +134,6 @@ output
 test.py
 run.sh
 log.txt
+
+# Docs
+/docs

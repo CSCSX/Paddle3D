@@ -7,6 +7,7 @@ from paddle3d.apis import manager
 from paddle3d.models.backbones import MMResNet
 from paddle3d.models.detection.bevdet import BEVDet4D
 from colorama import Fore, Style
+from paddle3d.utils.checkpoint import load_pretrained_model
 
 
 def log(*args):
@@ -27,6 +28,8 @@ class BEVDet4D_KD(nn.Layer):
                  img_backbone=None,
                  img_neck=None,
                  pts_bbox_head=None,
+                 student_path=None,
+                 teacher_path=None,
                  **kwargs):
         super(BEVDet4D_KD, self).__init__(**kwargs)
 
@@ -58,6 +61,9 @@ class BEVDet4D_KD(nn.Layer):
             pts_bbox_head=copy.deepcopy(pts_bbox_head)
         )
 
+        load_pretrained_model(self.student, student_path)
+        load_pretrained_model(self.teacher, teacher_path)
+
 
     def _test_to_pseudo(self, pseudo_bbox_list):
         pseudo_labels = []  # (b, n)
@@ -85,6 +91,4 @@ class BEVDet4D_KD(nn.Layer):
                 samples['gt_bboxes_3d'] = pseudo_bboxes
             ret = self.student.forward_train(samples, *args, **kwargs)
         ret = self.student.forward_test(samples, *args, **kwargs)
-        # log('here')
-        # exit()
         return ret
