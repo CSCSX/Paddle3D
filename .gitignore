@@ -128,7 +128,7 @@ data/nuscenes
 output
 
 # Models
-models
+/models
 
 # Tmp files
 test.py
